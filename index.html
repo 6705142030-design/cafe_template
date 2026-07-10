@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hearth &amp; Bean Café</title>
+<style>
+  /* ============ RESET & VARIABLES ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root{
+    --charcoal: #201C18;      /* primary dark background */
+    --charcoal-soft: #2A2521; /* card / section variant */
+    --cream: #F7F1E6;         /* light background & light text */
+    --copper: #C1793F;        /* primary accent (CTA, highlights) */
+    --copper-light: #E0A868;  /* hover state */
+    --sage: #6B7A5E;          /* secondary accent (freshness) */
+    --ink: #2A2521;           /* body text on light backgrounds */
+    --line: rgba(247,241,230,0.14);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body{
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+  }
+
+  img { display: block; max-width: 100%; }
+
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    html { scroll-behavior: auto; }
+    *, *::before, *::after{
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ============ 1. NAVIGATION ============ */
+  .navbar{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 6vw;
+    background: rgba(32,28,24,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  .navbar .logo{
+    color: var(--cream);
+    font-size: 1.4em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .navbar .logo span{ color: var(--copper); }
+  .nav-links{
+    list-style: none;
+    display: flex;
+    gap: 34px;
+  }
+  .nav-links a{
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 0.95em;
+    font-weight: 500;
+    position: relative;
+    padding-bottom: 4px;
+    transition: color 0.25s ease;
+  }
+  .nav-links a::after{
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--copper);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover{ color: var(--copper-light); }
+  .nav-links a:hover::after{ width: 100%; }
+
+  .nav-toggle{ display: none; }
+
+  /* ============ 2. HERO ============ */
+  .hero{
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 6vw;
+    overflow: hidden;
+    background:
+      linear-gradient(100deg, rgba(32,28,24,0.94) 30%, rgba(32,28,24,0.55) 75%),
+      url('https://images.unsplash.com/photo-1752756992329-961db6366376?w=1600&q=80') center/cover no-repeat;
+  }
+  .hero-content{
+    max-width: 620px;
+    position: relative;
+    z-index: 2;
+    padding-top: 70px;
+  }
+  .hero-content .eyebrow{
+    color: var(--copper-light);
+    font-size: 0.85em;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.1s;
+  }
+  .hero h1{
+    color: var(--cream);
+    font-size: clamp(2.6em, 6vw, 4.2em);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.3s;
+  }
+  .hero h1 em{
+    color: var(--copper);
+    font-style: normal;
+  }
+  .hero p{
+    color: rgba(247,241,230,0.8);
+    font-size: 1.15em;
+    max-width: 46ch;
+    margin-bottom: 34px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.5s;
+  }
+  .hero-buttons{
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.7s;
+  }
+  @keyframes fadeUp{
+    from{ opacity: 0; transform: translateY(18px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  .btn{
+    display: inline-block;
+    padding: 15px 34px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95em;
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    box-shadow: 0 8px 20px rgba(193,121,63,0.25);
+  }
+  .btn-primary{ background: var(--copper); color: var(--charcoal); }
+  .btn-primary:hover{ background: var(--copper-light); transform: translateY(-3px); box-shadow: 0 12px 26px rgba(193,121,63,0.35); }
+  .btn-outline{
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(247,241,230,0.4);
+    box-shadow: none;
+  }
+  .btn-outline:hover{ border-color: var(--cream); background: rgba(247,241,230,0.08); transform: translateY(-3px); }
+
+  /* Decorative transparent coffee cup + steam (pure SVG, no background) */
+  .hero-graphic{
+    position: absolute;
+    right: 7vw;
+    bottom: 8vh;
+    width: 220px;
+    z-index: 2;
+    opacity: 0.95;
+  }
+  .steam-path{
+    stroke: rgba(247,241,230,0.55);
+    stroke-width: 4;
+    fill: none;
+    stroke-linecap: round;
+    stroke-dasharray: 40 40;
+    animation: steamRise 3.2s ease-in-out infinite;
+  }
+  .steam-path.s2{ animation-delay: 0.6s; }
+  .steam-path.s3{ animation-delay: 1.2s; }
+  @keyframes steamRise{
+    0%{ stroke-dashoffset: 80; opacity: 0; }
+    30%{ opacity: 0.8; }
+    100%{ stroke-dashoffset: 0; opacity: 0; }
+  }
+
+  /* floating coffee bean decorations */
+  .bean{
+    position: absolute;
+    opacity: 0.5;
+    animation: floatBean 7s ease-in-out infinite;
+  }
+  @keyframes floatBean{
+    0%, 100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-18px) rotate(12deg); }
+  }
+
+  /* ============ 3. SERVICES ============ */
+  .services{
+    padding: 110px 6vw;
+    background: var(--cream);
+    text-align: center;
+  }
+  .section-eyebrow{
+    color: var(--copper);
+    font-size: 0.85em;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .section-title{
+    font-size: clamp(1.8em, 4vw, 2.6em);
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 60px;
+  }
+  .services-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+  .service-card{
+    background: #fff;
+    border-radius: 10px;
+    padding: 44px 30px;
+    box-shadow: 0 6px 20px rgba(32,28,24,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: left;
+  }
+  .service-card:hover{
+    transform: translateY(-8px);
+    box-shadow: 0 18px 34px rgba(32,28,24,0.14);
+  }
+  .service-icon{
+    width: 62px;
+    height: 62px;
+    margin-bottom: 22px;
+  }
+  .service-card h3{
+    font-size: 1.3em;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .service-card p{
+    color: #6b6459;
+    font-size: 0.98em;
+  }
+
+  /* ============ 4. WHY CHOOSE US ============ */
+  .why{
+    background: var(--charcoal);
+    padding: 110px 6vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    align-items: center;
+  }
+  .why-photo{
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+  .why-photo img{ width: 100%; height: 460px; object-fit: cover; }
+  .why .section-eyebrow{ color: var(--copper-light); }
+  .why .section-title{ color: var(--cream); text-align: left; margin-bottom: 34px; }
+  .why-list{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+  .why-list li{
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  .why-emoji{
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+  }
+  .why-text h4{
+    color: var(--cream);
+    font-size: 1.1em;
+    margin-bottom: 4px;
+  }
+  .why-text p{
+    color: rgba(247,241,230,0.65);
+    font-size: 0.95em;
+  }
+
+  /* ============ 5. CONTACT ============ */
+  .contact{
+    padding: 110px 6vw;
+    background: var(--cream);
+  }
+  .contact-inner{
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .contact-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 50px;
+  }
+  .contact-card{
+    background: #fff;
+    border-radius: 10px;
+    padding: 32px 24px;
+    box-shadow: 0 6px 20px rgba(32,28,24,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .contact-card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 16px 30px rgba(32,28,24,0.12);
+  }
+  .contact-card .icon{ font-size: 1.8em; margin-bottom: 12px; }
+  .contact-card h4{ margin-bottom: 6px; color: var(--ink); }
+  .contact-card p{ color: #6b6459; font-size: 0.95em; }
+
+  .contact .btn-primary{ margin-top: 46px; }
+
+  /* ============ 6. FOOTER ============ */
+  .footer{
+    background: var(--charcoal);
+    color: rgba(247,241,230,0.55);
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 0.88em;
+    border-top: 1px solid var(--line);
+  }
+  .footer span{ color: var(--copper-light); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 860px){
+    .nav-links{
+      position: absolute;
+      top: 100%; left: 0; right: 0;
+      background: var(--charcoal);
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .nav-links a{ padding: 16px 0; width: 100%; text-align: center; }
+    .nav-toggle{
+      display: block;
+      background: none;
+      border: none;
+      color: var(--cream);
+      font-size: 1.6em;
+      cursor: pointer;
+    }
+    .nav-toggle:checked ~ .nav-links{ max-height: 300px; }
+
+    .services-grid{ grid-template-columns: 1fr; }
+    .why{ grid-template-columns: 1fr; }
+    .why-photo img{ height: 320px; }
+    .contact-grid{ grid-template-columns: 1fr; }
+    .hero-graphic{ display: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ 1. NAVIGATION ============ -->
+  <nav class="navbar">
+    <div class="logo"><span>&#9749;</span> Hearth &amp; Bean</div>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" style="display:none;">
+    <ul class="nav-links">
+      <li><a href="#services">Menu</a></li>
+      <li><a href="#why">Why Us</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ============ 2. HERO ============ -->
+  <header class="hero">
+    <!-- floating bean decorations (transparent SVG, no background) -->
+    <svg class="bean" style="top:20%; left:8%; width:34px;" viewBox="0 0 40 60" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2C9 8 2 22 2 34c0 14 8 24 18 24s18-10 18-24C38 22 31 8 20 2Z" fill="#C1793F"/>
+      <path d="M20 6C20 20 20 40 20 56" stroke="#201C18" stroke-width="2" fill="none"/>
+    </svg>
+    <svg class="bean" style="top:65%; left:14%; width:22px; animation-delay:1.5s;" viewBox="0 0 40 60" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2C9 8 2 22 2 34c0 14 8 24 18 24s18-10 18-24C38 22 31 8 20 2Z" fill="#E0A868"/>
+      <path d="M20 6C20 20 20 40 20 56" stroke="#201C18" stroke-width="2" fill="none"/>
+    </svg>
+
+    <div class="hero-content">
+      <span class="eyebrow">Est. 2018 &middot; Small-batch roastery</span>
+      <h1>Slow mornings<br>start with a <em>great cup.</em></h1>
+      <p>Ethically sourced beans, roasted in-house every week, poured by people who genuinely love what they do. Pull up a chair and stay a while.</p>
+      <div class="hero-buttons">
+        <a href="#services" class="btn btn-primary">View Our Menu</a>
+        <a href="#contact" class="btn btn-outline">Visit Us</a>
+      </div>
+    </div>
+
+    <!-- transparent coffee cup graphic with animated steam -->
+    <svg class="hero-graphic" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+      <path class="steam-path s1" d="M85 70 C 75 55, 95 45, 85 30"/>
+      <path class="steam-path s2" d="M110 70 C 100 55, 120 45, 110 30"/>
+      <path class="steam-path s3" d="M135 70 C 125 55, 145 45, 135 30"/>
+      <path d="M55 100 h110 l-10 90 a20 20 0 0 1 -20 18 h-50 a20 20 0 0 1 -20 -18 Z" fill="rgba(247,241,230,0.12)" stroke="rgba(247,241,230,0.6)" stroke-width="4"/>
+      <path d="M165 115 q35 0 35 32 q0 32 -35 32" fill="none" stroke="rgba(247,241,230,0.6)" stroke-width="4"/>
+      <ellipse cx="110" cy="100" rx="55" ry="10" fill="rgba(193,121,63,0.35)" stroke="rgba(247,241,230,0.6)" stroke-width="4"/>
+    </svg>
+  </header>
+
+  <!-- ============ 3. SERVICES ============ -->
+  <section class="services" id="services">
+    <span class="section-eyebrow">What We Offer</span>
+    <h2 class="section-title">Made for your day</h2>
+    <div class="services-grid">
+
+      <div class="service-card">
+        <svg class="service-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 24h34l-3 26a8 8 0 0 1-8 7H25a8 8 0 0 1-8-7Z" fill="none" stroke="#C1793F" stroke-width="3"/>
+          <path d="M48 28q12 0 12 11t-12 11" fill="none" stroke="#C1793F" stroke-width="3"/>
+          <path d="M22 14c-3 3 3 5 0 9M32 14c-3 3 3 5 0 9M42 14c-3 3 3 5 0 9" fill="none" stroke="#6B7A5E" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <h3>Freshly Roasted Coffee</h3>
+        <p>Single-origin beans roasted weekly in small batches, brewed pour-over, espresso, or cold brew — your call.</p>
+      </div>
+
+      <div class="service-card">
+        <svg class="service-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path d="M32 14c8 0 20 6 20 20 0 4-2 6-5 6-1-6-6-9-11-9-2 5-6 9-4 9-8 0-20-6-20-20 0-6 8-6 20-6Z" fill="none" stroke="#C1793F" stroke-width="3"/>
+          <path d="M14 46c6-2 30-2 36 0" fill="none" stroke="#6B7A5E" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <h3>Handcrafted Pastries</h3>
+        <p>Croissants, scones and seasonal bakes made fresh in-house every morning — nothing shipped frozen.</p>
+      </div>
+
+      <div class="service-card">
+        <svg class="service-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 30a28 20 0 0 1 40 0" fill="none" stroke="#C1793F" stroke-width="3" stroke-linecap="round"/>
+          <path d="M20 38a16 12 0 0 1 24 0" fill="none" stroke="#C1793F" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="32" cy="46" r="4" fill="#6B7A5E"/>
+        </svg>
+        <h3>Cozy Workspace</h3>
+        <p>Free wifi, warm lighting, and comfortable seating built for long conversations or heads-down work.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 4. WHY CHOOSE US ============ -->
+  <section class="why" id="why">
+    <div class="why-photo">
+      <img src="https://images.unsplash.com/photo-1761271046396-97d231b59dd7?w=800&q=80" alt="Barista pouring latte art into a coffee cup">
+    </div>
+    <div>
+      <span class="section-eyebrow">Why Choose Us</span>
+      <h2 class="section-title">The little things matter</h2>
+      <ul class="why-list">
+        <li>
+          <div class="why-emoji">&#9749;</div>
+          <div class="why-text">
+            <h4>Ethically sourced beans</h4>
+            <p>Direct-trade relationships with growers, so every cup supports the farm it came from.</p>
+          </div>
+        </li>
+        <li>
+          <div class="why-emoji">&#127793;</div>
+          <div class="why-text">
+            <h4>Baked fresh, daily</h4>
+            <p>Our kitchen opens at 5am so nothing on the counter is more than a few hours old.</p>
+          </div>
+        </li>
+        <li>
+          <div class="why-emoji">&#128337;</div>
+          <div class="why-text">
+            <h4>Open early, open late</h4>
+            <p>Whether you're here for a 7am espresso or a 9pm decaf, we've got you covered.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ 5. CONTACT ============ -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <span class="section-eyebrow">Get In Touch</span>
+      <h2 class="section-title">Come say hello</h2>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="icon">&#128205;</div>
+          <h4>Address</h4>
+          <p>Your Address Here</p>
+        </div>
+        <div class="contact-card">
+          <div class="icon">&#128222;</div>
+          <h4>Phone</h4>
+          <p>Your Phone Number</p>
+        </div>
+        <div class="contact-card">
+          <div class="icon">&#9200;</div>
+          <h4>Hours</h4>
+          <p>Daily, 6:00 AM &ndash; 8:00 PM</p>
+        </div>
+      </div>
+      <a href="#" class="btn btn-primary">Order Ahead</a>
+    </div>
+  </section>
+
+  <!-- ============ 6. FOOTER ============ -->
+  <footer class="footer">
+    &copy; 2026 <span>Hearth &amp; Bean Café</span>. All rights reserved.
+  </footer>
+
+  <script>
+    // Mobile nav toggle (kept as plain vanilla JS, no dependencies)
+    // Injects a checkbox-driven menu button for small screens
+    (function(){
+      var nav = document.querySelector('.navbar');
+      var btn = document.createElement('label');
+      btn.setAttribute('for', 'nav-toggle');
+      btn.className = 'nav-toggle';
+      btn.style.display = 'none';
+      btn.innerHTML = '&#9776;';
+      nav.insertBefore(btn, document.querySelector('.nav-links'));
+
+      function updateToggle(){
+        if(window.innerWidth <= 860){
+          btn.style.display = 'block';
+        } else {
+          btn.style.display = 'none';
+        }
+      }
+      window.addEventListener('resize', updateToggle);
+      updateToggle();
+    })();
+  </script>
+</body>
+</html>

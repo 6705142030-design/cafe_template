@@ -18,7 +18,7 @@ A modern, warm cafe landing page with animated steam effect, built with pure HTM
 
 ## 🚀 Live Demo
 
-[Click here to view live demo](https://yourusername.github.io/cafe-template/)
+[Click here to view live demo](https://6705142030-design.github.io/cafe_template/)
 
 ## 🛠️ Tech Stack
 
